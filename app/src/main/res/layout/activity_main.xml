@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.cnbs.gisdemo.MainActivity">
+
+    <com.esri.arcgisruntime.mapping.view.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <TextView
+        android:id="@+id/show_tv"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:background="@color/colorWhite"
+        android:text="@string/app_name_"
+        android:textSize="16sp"
+        android:textColor="@color/colorPrimaryDark"/>
+
+    <ImageView
+        android:id="@+id/layer_change"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/shape_main_map_menu"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:scaleType="center"
+        android:layout_below="@+id/show_tv"
+        android:layout_alignParentEnd="true"
+        android:src="@mipmap/map_layer"/>
+
+    <ImageView
+        android:id="@+id/map_location"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/shape_main_map_menu"
+        android:scaleType="center"
+        android:layout_marginBottom="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_alignParentBottom="true"
+        android:src="@mipmap/map_location"/>
+
+    <ImageView
+        android:id="@+id/scale_max"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@drawable/shape_main_map_menu"
+        android:layout_below="@+id/show_tv"
+        android:scaleType="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:src="@mipmap/enlarge"/>
+
+    <ImageView
+        android:id="@+id/scale_min"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@drawable/shape_main_map_menu"
+        android:scaleType="center"
+        android:layout_below="@+id/scale_max"
+        android:layout_marginTop="2dp"
+        android:layout_marginStart="20dp"
+        android:src="@mipmap/narrow"/>
+
+</RelativeLayout>
