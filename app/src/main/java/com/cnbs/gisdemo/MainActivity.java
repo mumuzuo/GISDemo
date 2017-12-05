@@ -30,7 +30,9 @@ import com.esri.arcgisruntime.symbology.SimpleLineSymbol;
 import com.esri.arcgisruntime.symbology.SimpleRenderer;
 import com.esri.arcgisruntime.util.ListenableList;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static com.cnbs.gisdemo.R.id.mapView;
@@ -102,34 +104,19 @@ public class MainActivity extends AppCompatActivity {
                             int size = overlayResultList.size();
                             if (size > 1) {
                                 showTV.setText("你点到了 --" + size + "个元素");
-                            }else {
+                            } else {
                                 showTV.setText("GISDemo");
                             }
 //                            for (int i = 0; i < size; i++) {
-                                List<Graphic> graphics = overlayResultList.get(0).getGraphics();
+                            List<Graphic> graphics = overlayResultList.get(0).getGraphics();
 //                                List<Graphic> graphics = overlayResultList.get(i).getGraphics();
-                                if (!graphics.isEmpty() && graphics.size() >= 0) {
-                                    String s = "";
-                                    Graphic graphic = graphics.get(0);//取点击的第一个
-                                    if (graphic == pointGraphic0) {
-                                        s = "点0";
-                                    }
-                                    if (graphic == pointGraphic1) {
-                                        s = "点1";
-                                    }
-                                    if (graphic == pointGraphic2) {
-                                        s = "点2";
-                                    }
-                                    if (graphic == lineGraphic0) {
-                                        s = "线0";
-                                    }
-                                    if (graphic == lineGraphic1) {
-                                        s = "线1";
-                                    }
-                                    Graphic graphic0 = graphics.get(0);
-                                    // show a toast message if graphic was returned
-                                    Toast.makeText(getApplicationContext(), "你点到了 --" + s, Toast.LENGTH_SHORT).show();
-                                }
+                            if (!graphics.isEmpty() && graphics.size() >= 0) {
+                                String s = "";
+                                Graphic graphic = graphics.get(0);//取点击的第一个
+                                Map<String, Object> map = graphic.getAttributes();
+                                String hint = (String) map.get("hint");
+                                Toast.makeText(getApplicationContext(), "你点到了 - " + hint, Toast.LENGTH_SHORT).show();
+                            }
 //                            }
                         }
 
@@ -157,18 +144,26 @@ public class MainActivity extends AppCompatActivity {
         Point pointGeometry0 = CoordinateFormatter.fromLatitudeLongitude("30.5469N 114.3036E", null);
         Point pointGeometry1 = CoordinateFormatter.fromLatitudeLongitude("30.5459N 114.3035E", null);
         Point pointGeometry2 = CoordinateFormatter.fromLatitudeLongitude("30.5449N 114.3034E", null);
-        // create graphic for point
-        pointGraphic0 = new Graphic(pointGeometry0);
-        pointGraphic1 = new Graphic(pointGeometry1);
-        pointGraphic2 = new Graphic(pointGeometry2);
+
         // create a graphic overlay for the point
         pointGraphicOverlay = new GraphicsOverlay();
-        BitmapDrawable drawable = (BitmapDrawable) getResources().getDrawable(R.drawable.ic_map_red);
-//        BitmapDrawable drawable = (BitmapDrawable) getResources().getDrawable(R.drawable.ic_map_blue);
-        final PictureMarkerSymbol pointSymbol = new PictureMarkerSymbol(drawable);
-        // create simple renderer
-        SimpleRenderer pointRenderer = new SimpleRenderer(pointSymbol);
-        pointGraphicOverlay.setRenderer(pointRenderer);
+        BitmapDrawable drawable0 = (BitmapDrawable) getResources().getDrawable(R.drawable.ic_map_red);
+        BitmapDrawable drawable1 = (BitmapDrawable) getResources().getDrawable(R.drawable.ic_map_blue);
+        final PictureMarkerSymbol pointSymbol0 = new PictureMarkerSymbol(drawable0);
+        final PictureMarkerSymbol pointSymbol1 = new PictureMarkerSymbol(drawable1);
+  /*      // create simple renderer,给这一类都设置同样的覆盖物
+        SimpleRenderer pointRenderer = new SimpleRenderer(pointSymbol0);
+        pointGraphicOverlay.setRenderer(pointRenderer);*/
+        // 给覆盖物设置相关参数，可以把实体类的json字符串传过去
+        Map<String, Object> map0 = new HashMap<>();
+        Map<String, Object> map1 = new HashMap<>();
+        Map<String, Object> map2 = new HashMap<>();
+        map0.put("hint", "点0");
+        map1.put("hint", "点1");
+        map2.put("hint", "点2");
+        pointGraphic0 = new Graphic(pointGeometry0, map0, pointSymbol0);
+        pointGraphic1 = new Graphic(pointGeometry1, map1, pointSymbol1);
+        pointGraphic2 = new Graphic(pointGeometry2, map2, pointSymbol0);
         // add graphic to overlay
         pointGraphicOverlay.getGraphics().add(pointGraphic0);
         pointGraphicOverlay.getGraphics().add(pointGraphic1);
@@ -187,8 +182,12 @@ public class MainActivity extends AppCompatActivity {
         SimpleLineSymbol lineSymbol1 = new SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, R.color.colorPrimary, 2);
         SimpleRenderer lineRenderer0 = new SimpleRenderer(lineSymbol0);
         SimpleRenderer lineRenderer1 = new SimpleRenderer(lineSymbol1);
-        lineGraphic0 = new Graphic(polyline0, lineSymbol0);
-        lineGraphic1 = new Graphic(polyline1, lineSymbol1);
+        Map<String, Object> mapl0 = new HashMap<>();
+        Map<String, Object> mapl1 = new HashMap<>();
+        mapl0.put("hint", "线0");
+        mapl1.put("hint", "线1");
+        lineGraphic0 = new Graphic(polyline0, mapl0, lineSymbol0);
+        lineGraphic1 = new Graphic(polyline1, mapl1, lineSymbol1);
         lineGraphicOverlay = new GraphicsOverlay();
         lineGraphicOverlay.setRenderer(lineRenderer0);
         lineGraphicOverlay.setRenderer(lineRenderer1);
@@ -212,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
             recLen--;
             handler.postDelayed(runnable, 1000);
             //显示和消失错开
-            if(isShow){
+            if (isShow) {
                 ListenableList<GraphicsOverlay> list = mMapView.getGraphicsOverlays();
                 for (GraphicsOverlay overlay : list) {
                     ListenableList<Graphic> graphics = overlay.getGraphics();
@@ -220,10 +219,10 @@ public class MainActivity extends AppCompatActivity {
                         graphic.setVisible(true);
                     }
                 }
-            }else {
+            } else {
                 int index = recLen % 5;
                 //顺序是4,3,2,1,0
-                switch (index){
+                switch (index) {
                     case 4:
                         pointGraphic0.setVisible(false);
                         break;
