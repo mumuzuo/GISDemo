@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import static com.cnbs.gisdemo.R.id.mapView;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -58,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initView() {
         showTV = (TextView) findViewById(R.id.show_tv);
-        mMapView = (MapView) findViewById(mapView);
+        mMapView = (MapView) findViewById(R.id.mapView);
         Utils utils = new Utils();
         //tpk--缓存显示
         TileCache tileCache = new TileCache(utils.Save_Path + "/" + utils.File_name);
@@ -111,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
                             List<Graphic> graphics = overlayResultList.get(0).getGraphics();
 //                                List<Graphic> graphics = overlayResultList.get(i).getGraphics();
                             if (!graphics.isEmpty() && graphics.size() >= 0) {
-                                String s = "";
                                 Graphic graphic = graphics.get(0);//取点击的第一个
                                 Map<String, Object> map = graphic.getAttributes();
                                 String hint = (String) map.get("hint");

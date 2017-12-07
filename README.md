@@ -1,6 +1,7 @@
 # GISDemo
 
-# ArcGis for Android 开发中常见的一些操作
+ GIS地图学习笔记二之Android开发 http://blog.csdn.net/m0_37168878/article/details/78695473
+
 
 ## 1、简单使用
  
@@ -341,6 +342,25 @@ button.setOnClickListener(new View.OnClickListener() {
         //添加覆盖物
         addGraphicsOverlay();
 ```
+```
+      // 给覆盖物设置相关参数，可以把实体类的json字符串传过去
+        Map<String, Object> map0 = new HashMap<>();
+        Map<String, Object> map1 = new HashMap<>();
+        Map<String, Object> map2 = new HashMap<>();
+        map0.put("hint", "点0");
+        map1.put("hint", "点1");
+        map2.put("hint", "点2");
+        pointGraphic0 = new Graphic(pointGeometry0, map0, pointSymbol0);
+        pointGraphic1 = new Graphic(pointGeometry1, map1, pointSymbol1);
+        pointGraphic2 = new Graphic(pointGeometry2, map2, pointSymbol0);
+        ...
+        Map<String, Object> mapl0 = new HashMap<>();
+        Map<String, Object> mapl1 = new HashMap<>();
+        mapl0.put("hint", "线0");
+        mapl1.put("hint", "线1");
+        lineGraphic0 = new Graphic(polyline0, mapl0, lineSymbol0);
+        lineGraphic1 = new Graphic(polyline1, mapl1, lineSymbol1);
+```
 
 ```
 class MapViewTouchListener extends DefaultMapViewOnTouchListener {
@@ -361,32 +381,20 @@ class MapViewTouchListener extends DefaultMapViewOnTouchListener {
                         List<IdentifyGraphicsOverlayResult> overlayResultList = overlaysAsync.get();
                         if (!overlayResultList.isEmpty() && overlayResultList.size() >= 0) {
                             //如果只取第一个点到的，就不用for循环了，直接get(0)；如果需要取所有点击到的覆盖物，就可以用for循环
-                               int size = overlayResultList.size();
-                            if (size > 1) {
-                                Toast.makeText(getApplicationContext(), "你点到了 --" + size + "个元素", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                            for (int i = 0; i < size ; i++) {
-                                List<Graphic> graphics = overlayResultList.get(i).getGraphics();
-                                if (!graphics.isEmpty() && graphics.size() >= 0) {
-                                    String s = "";
-                                    Graphic graphic = graphics.get(0);//取点击的第一个
-                                    if (graphic == pointGraphic0) {
-                                        s = "点0";
-                                    }
-                                    if (graphic == pointGraphic1) {
-                                        s = "点1";
-                                    }
-                                    if (graphic == pointGraphic2) {
-                                        s = "点2";
-                                    }
-                                    if (graphic == lineGraphic) {
-                                        s = "线";
-                                    }
-                                    Graphic graphic0 = graphics.get(0);
-                                    // show a toast message if graphic was returned
-                                    Toast.makeText(getApplicationContext(), "你点到了 --" + s, Toast.LENGTH_SHORT).show();
-                                }
+                            int size = overlayResultList.size();
+                             if (size > 1) {
+                                 showTV.setText("你点到了 --" + size + "个元素");
+                             } else {
+                                 showTV.setText("GISDemo");
+                             }
+//                            for (int i = 0; i < size; i++) {
+                            List<Graphic> graphics = overlayResultList.get(0).getGraphics();
+//                                List<Graphic> graphics = overlayResultList.get(i).getGraphics();
+                            if (!graphics.isEmpty() && graphics.size() >= 0) {
+                                Graphic graphic = graphics.get(0);//取点击的第一个
+                                Map<String, Object> map = graphic.getAttributes();
+                                String hint = (String) map.get("hint");
+                                Toast.makeText(getApplicationContext(), "你点到了 - " + hint, Toast.LENGTH_SHORT).show();
                             }
                         }
 
